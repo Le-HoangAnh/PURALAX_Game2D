@@ -24,6 +24,11 @@ public class MainMenuManager : MonoBehaviour
         stagePanel.SetActive(false);
     }
 
+    private void OnEnable()
+    {
+        AudioManager.instance.AddButtonSound();
+    }
+
     public void GameQuit()
     {
 #if UNITY_EDITOR
@@ -59,5 +64,14 @@ public class MainMenuManager : MonoBehaviour
 
         levelPanel.SetActive(true);
         stageColorInLevelPanel.color = colors[currentStage - 1];
+    }
+
+    public void ToggleSound()
+    {
+        bool sound = PlayerPrefs.GetInt(Constants.DATA.SETTINGS_SOUND) == 0;
+        PlayerPrefs.SetInt(Constants.DATA.SETTINGS_SOUND, sound ? 1 : 0);
+        activeSoundImage.SetActive(!sound);
+
+        AudioManager.instance.ToggleSound();
     }
 }

@@ -20,11 +20,6 @@ public class StageSelect : MonoBehaviour
         countText = GetComponentInChildren<TMPro.TMP_Text>();
     }
 
-    private void Start()
-    {
-        button.onClick.AddListener(UpdateStage);
-    }
-
     private void OnEnable()
     {
         countText.text = buttonStage.ToString();
@@ -40,6 +35,11 @@ public class StageSelect : MonoBehaviour
         }
         
         activeImage.SetActive(stageActive == 1);
+    }
+
+    private void Start()
+    {
+        button.onClick.AddListener(UpdateStage);
     }
 
     private void UpdateStage()
