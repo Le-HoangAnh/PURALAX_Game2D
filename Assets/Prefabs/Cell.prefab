@@ -549,6 +549,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0625db9e75598040a36f4ad2e419948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cellData:
+    moves: 0
+    color: 0
+    gridPos: {x: 0, y: 0}
+  first: {fileID: 3510207063278990510}
+  second: {fileID: 4118951867067262184}
+  circles:
+  - {fileID: 4818261296624643082}
+  - {fileID: 335665833197493357}
+  - {fileID: 202810323861536783}
+  - {fileID: 8825917842207115302}
 --- !u!1 &8825917842207115302
 GameObject:
   m_ObjectHideFlags: 0

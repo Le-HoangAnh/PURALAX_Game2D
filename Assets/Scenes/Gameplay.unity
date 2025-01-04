@@ -538,9 +538,17 @@ MonoBehaviour:
   levelText: {fileID: 2040556072}
   titleImage: {fileID: 392892602}
   winImage: {fileID: 321805212}
-  colors: []
   levelDictionary: {fileID: 11400000, guid: f3600cc8b9472de47a0b0235d8d73bff, type: 2}
   cellPrefab: {fileID: 4462233159824192917, guid: 3c62b8717c7880b4b81c27b76cdfb849, type: 3}
+  colors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.52179044, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 0.45705712, g: 1, b: 0, a: 1}
+  - {r: 0, g: 0.8039216, b: 1, a: 1}
+  - {r: 0.003921569, g: 0.078431375, b: 0.8666667, a: 1}
+  - {r: 0.65882355, g: 0, b: 0.8980392, a: 1}
+  - {r: 1, g: 0, b: 0.99215686, a: 1}
 --- !u!4 &326255089
 Transform:
   m_ObjectHideFlags: 0

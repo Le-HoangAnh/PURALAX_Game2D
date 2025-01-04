@@ -9,9 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b4b62b9f40d8cb438ed878ef33e324a, type: 3}
-  m_Name: LEVELS
+  m_Script: {fileID: 11500000, guid: d26cb0208f77ef844a906827fbe6ef03, type: 3}
+  m_Name: STAGE_1_2
   m_EditorClassIdentifier: 
-  allLevels:
-  - {fileID: 11400000, guid: 139f818e93ea0b14f98b8b372b0f6772, type: 2}
-  - {fileID: 11400000, guid: d90f1125835efae459cba3095aba0ca2, type: 2}
+  levelName: CURRENT_STAGE_1_2
+  row: 3
+  column: 3
+  winColor: 0
+  cellData:
+  - moves: 2
+    color: 0
+    gridPos: {x: 0, y: 1}
+  - moves: 0
+    color: 1
+    gridPos: {x: 2, y: 1}
