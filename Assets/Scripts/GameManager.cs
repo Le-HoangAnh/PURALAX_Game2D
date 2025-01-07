@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Image titleImage, winImage;
     [SerializeField] private LevelDictionary levelDictionary;
     [SerializeField] private Cell cellPrefab;
+    [SerializeField] private AudioClip moveClip, updateClip, winClip, loseClip;
 
     public List<Color> colors;
     private Dictionary<Vector2Int, Cell> cellsDictionary = new();
@@ -20,6 +21,8 @@ public class GameManager : MonoBehaviour
     private int winColor;
 
     private GameState currentGameState;
+    private Vector2Int startClickGrid, endClickGrid;
+    private float stateDelay;
 
     private void Awake()
     {
@@ -33,6 +36,34 @@ public class GameManager : MonoBehaviour
         SpawnLevel();
 
         AudioManager.instance.AddButtonSound();
+    }
+
+    private void Update()
+    {
+        if (currentGameState != GameState.INPUT) return;
+
+        Vector3 inputPos;
+        Vector2Int currentClickedPos;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            inputPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            currentClickedPos = new ((int) inputPos.x, (int) inputPos.y);
+            startClickGrid = currentClickedPos;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            inputPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            currentClickedPos = new((int)inputPos.x, (int)inputPos.y);
+            endClickGrid = currentClickedPos;
+            endClickGrid = GetDirection(endClickGrid - startClickGrid);
+
+            Debug.Log("STARTPOS: " + startClickGrid);
+            Debug.Log("OFFSET: " + endClickGrid);
+
+            currentGameState = GameState.ANIMATION;
+            CalculateMoves();
+        }
     }
 
     private void SpawnLevel()
@@ -77,6 +108,96 @@ public class GameManager : MonoBehaviour
 
         //CHANGE TITLE COLOR
         titleImage.color = colors[winColor];
+    }
+
+    private Vector2Int GetDirection(Vector2Int offset)
+    {
+        Vector2Int result;
+        if (Mathf.Abs(offset.x) > Mathf.Abs(offset.y))
+        {
+            result = new Vector2Int(offset.x > 0 ? 1 : -1, 0);
+        }
+        else
+        {
+            result = new Vector2Int(0, offset.y > 0 ? 1 : -1);
+        }
+        return result;
+    }
+
+    private bool IsValidPos(Vector2Int pos)
+    {
+        return !(pos.x >= currentLevelObject.row || pos.x < 0 || pos.y < 0 || pos.y >= currentLevelObject.column);
+    }
+
+    private void PlayUpdateSound()
+    {
+        AudioManager.instance.PlaySound(updateClip);
+    }
+
+    private IEnumerator SwitchStateAfterDelay()
+    {
+        while (stateDelay > 0f)
+        {
+            stateDelay -= Time.deltaTime;
+            yield return null;
+        }
+
+        currentGameState = GameState.INPUT;
+    }
+
+    //MOVES
+    private void CalculateMoves()
+    {
+        AudioManager.instance.PlaySound(moveClip);
+
+        Cell currentClickedCell = cellsDictionary[startClickGrid];
+        Cell endClickedCell = cellsDictionary[startClickGrid + endClickGrid];
+
+        //VALID STARTPOS
+        if (!IsValidPos(startClickGrid))
+        {
+            stateDelay = 0f;
+            StartCoroutine(SwitchStateAfterDelay());
+            return;
+        }
+
+        //VALID ENDPOS AND HAS MOVES
+        if (!IsValidPos(startClickGrid + endClickGrid) || !(currentClickedCell.cellData.moves > 0))
+        {
+            stateDelay = 0f;
+            StartCoroutine(SwitchStateAfterDelay());
+            return;
+        }
+
+        //INVALID SAVE COLOR
+        if (currentClickedCell.cellData.color == endClickedCell.cellData.color)
+        {
+            stateDelay = 0f;
+            StartCoroutine(SwitchStateAfterDelay());
+            return;
+        }
+
+        //MOVE FOR EMPTY CELL
+        if (endClickedCell.cellData.color == -1)
+        {
+            currentClickedCell.cellData.moves -= 1;
+            StartCoroutine(currentClickedCell.UpdateMoves());
+
+            var temp = endClickedCell.cellData.gridPos;
+            endClickedCell.cellData.gridPos = currentClickedCell.cellData.gridPos;
+            currentClickedCell.cellData.gridPos = temp;
+
+            StartCoroutine(currentClickedCell.MoveToPos());
+            StartCoroutine(endClickedCell.MoveToPos());
+
+            cellsDictionary[startClickGrid] = endClickedCell;
+            cellsDictionary[startClickGrid + endClickGrid] = currentClickedCell;
+
+            stateDelay = Constants.Values.ANIMATION_TIME;
+            StartCoroutine(SwitchStateAfterDelay());
+
+            return;
+        }
     }
 
     public void GameRestart()

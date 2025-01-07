@@ -540,6 +540,10 @@ MonoBehaviour:
   winImage: {fileID: 321805212}
   levelDictionary: {fileID: 11400000, guid: f3600cc8b9472de47a0b0235d8d73bff, type: 2}
   cellPrefab: {fileID: 4462233159824192917, guid: 3c62b8717c7880b4b81c27b76cdfb849, type: 3}
+  moveClip: {fileID: 8300000, guid: 4ae2f20017adcaf4189c574fbed73c04, type: 3}
+  updateClip: {fileID: 8300000, guid: 61e4fe9686abb5b4294f25cd28ced3e2, type: 3}
+  winClip: {fileID: 8300000, guid: 96d97eff11036724bab13a1282a391a2, type: 3}
+  loseClip: {fileID: 8300000, guid: 564350b24ba2e794c82374fc56f821df, type: 3}
   colors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0.52179044, b: 0, a: 1}

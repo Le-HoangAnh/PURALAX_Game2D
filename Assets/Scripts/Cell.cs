@@ -39,7 +39,7 @@ public class Cell : MonoBehaviour
         StartCoroutine(UpdateMoves());
     }
 
-    IEnumerator UpdateMoves()
+    public IEnumerator UpdateMoves()
     {
         yield return new WaitForSeconds(Constants.Values.ANIMATION_TIME);
 
@@ -47,6 +47,22 @@ public class Cell : MonoBehaviour
         {
             circles[i].SetActive(i < cellData.moves);
         }
+    }
+
+    public IEnumerator MoveToPos()
+    {
+        Vector3 startPos = transform.position;
+        Vector3 endPos = new(cellData.gridPos.x + 0.5f, cellData.gridPos.y + 0.5f);
+        float animationTime = Constants.Values.ANIMATION_TIME;
+        Vector3 speed = (endPos - startPos) / animationTime;
+        float endTime = 0f;
+        while (endTime < animationTime)
+        {
+            transform.position += speed * Time.deltaTime;
+            endTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = endPos;
     }
 }
 
