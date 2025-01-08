@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class Cell : MonoBehaviour
 {
@@ -63,6 +62,23 @@ public class Cell : MonoBehaviour
             yield return null;
         }
         transform.position = endPos;
+    }
+
+    public IEnumerator ChangeColor(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        backSquare.gameObject.SetActive(true);
+        backSquare.StartColorSettings(cellData.color, true);
+        frontSquare.StartColorSettings(cellData.color, false);
+
+        var temp = frontSquare;
+        frontSquare = backSquare;
+        backSquare = temp;
+
+        yield return frontSquare.StartAnimation();
+
+        backSquare.gameObject.SetActive(false);
     }
 }
 

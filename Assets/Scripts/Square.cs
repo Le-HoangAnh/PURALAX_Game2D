@@ -39,4 +39,11 @@ public class Square : MonoBehaviour
 
         transform.localScale = endScale;
     }
+
+    public void StartColorSettings(int colorValue, bool front)
+    {
+        Color color = front ? GameManager.instance.colors[colorValue] : spriteRenderer.color;
+        spriteRenderer.color = color;
+        spriteRenderer.sortingOrder = front ? Constants.Values.FRONT : Constants.Values.BACK;
+    }
 }

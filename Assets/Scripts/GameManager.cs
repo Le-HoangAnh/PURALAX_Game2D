@@ -24,6 +24,15 @@ public class GameManager : MonoBehaviour
     private Vector2Int startClickGrid, endClickGrid;
     private float stateDelay;
 
+    private List<Cell> neighbours = new();
+    private List<Cell> newNeighbours = new();
+    private Dictionary<Vector2Int, bool> visited = new();
+
+    private readonly List<Vector2Int> directions = new()
+    {
+        new(1, 0), new(-1, 0), new(0, 1), new(0, -1)
+    };
+
     private void Awake()
     {
         instance = this;
@@ -58,14 +67,12 @@ public class GameManager : MonoBehaviour
             endClickGrid = currentClickedPos;
             endClickGrid = GetDirection(endClickGrid - startClickGrid);
 
-            Debug.Log("STARTPOS: " + startClickGrid);
-            Debug.Log("OFFSET: " + endClickGrid);
-
             currentGameState = GameState.ANIMATION;
             CalculateMoves();
         }
     }
 
+    //SPAWNER
     private void SpawnLevel()
     {
         int currentStage = PlayerPrefs.GetInt(Constants.DATA.CURRENT_STAGE);
@@ -109,6 +116,7 @@ public class GameManager : MonoBehaviour
         //CHANGE TITLE COLOR
         titleImage.color = colors[winColor];
     }
+    
 
     private Vector2Int GetDirection(Vector2Int offset)
     {
@@ -150,8 +158,8 @@ public class GameManager : MonoBehaviour
     {
         AudioManager.instance.PlaySound(moveClip);
 
-        Cell currentClickedCell = cellsDictionary[startClickGrid];
-        Cell endClickedCell = cellsDictionary[startClickGrid + endClickGrid];
+        //Cell currentClickedCell = cellsDictionary[startClickGrid];
+        //Cell endClickedCell = cellsDictionary[startClickGrid + endClickGrid];
 
         //VALID STARTPOS
         if (!IsValidPos(startClickGrid))
@@ -160,6 +168,8 @@ public class GameManager : MonoBehaviour
             StartCoroutine(SwitchStateAfterDelay());
             return;
         }
+
+        Cell currentClickedCell = cellsDictionary[startClickGrid];
 
         //VALID ENDPOS AND HAS MOVES
         if (!IsValidPos(startClickGrid + endClickGrid) || !(currentClickedCell.cellData.moves > 0))
@@ -170,6 +180,7 @@ public class GameManager : MonoBehaviour
         }
 
         //INVALID SAVE COLOR
+        Cell endClickedCell = cellsDictionary[startClickGrid + endClickGrid];
         if (currentClickedCell.cellData.color == endClickedCell.cellData.color)
         {
             stateDelay = 0f;
@@ -198,7 +209,58 @@ public class GameManager : MonoBehaviour
 
             return;
         }
+
+        //UPDATE THE FIRST COLLIDED CELL
+        int updateColor = endClickedCell.cellData.color;
+        endClickedCell.cellData.color = currentClickedCell.cellData.color;
+
+        StartCoroutine(endClickedCell.ChangeColor(0f));
+        currentClickedCell.cellData.moves--;
+
+        stateDelay = Constants.Values.ANIMATION_TIME;
+        StartCoroutine(currentClickedCell.UpdateMoves());
+        StartCoroutine(SwitchStateAfterDelay());
+
+        //CHECK FOR NEIGHBOURING CELLS
+        newNeighbours.Clear();
+        neighbours.Clear();
+        visited.Clear();
+        neighbours.Add(endClickedCell);
+
+        while (neighbours.Count > 0)
+        {
+            newNeighbours.Clear();
+            for (int i = 0; i < neighbours.Count; i++)
+            {
+                for (int j = 0; j < directions.Count; j++)
+                {
+                    if (IsValidPos(neighbours[i].currentPos + directions[j]))
+                    {
+                        endClickedCell = cellsDictionary[neighbours[i].currentPos + directions[j]];
+                        if (!visited.ContainsKey(endClickedCell.currentPos))
+                        {
+                            if (endClickedCell.cellData.color == updateColor)
+                            {
+                                endClickedCell.cellData.color = currentClickedCell.cellData.color;
+                                StartCoroutine(endClickedCell.ChangeColor(stateDelay));
+                                newNeighbours.Add(endClickedCell);
+                                visited[endClickedCell.currentPos] = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Invoke("PlayUpdateSound", stateDelay);
+            stateDelay += (newNeighbours.Count > 0 ? Constants.Values.ANIMATION_TIME : 0);
+            neighbours.Clear();
+            foreach (var item in newNeighbours)
+            {
+                neighbours.Add(item);
+            }
+        }
     }
+    
 
     public void GameRestart()
     {
