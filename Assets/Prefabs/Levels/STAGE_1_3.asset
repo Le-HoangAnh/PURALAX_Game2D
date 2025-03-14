@@ -17,15 +17,9 @@ MonoBehaviour:
   column: 3
   winColor: 0
   cellData:
-  - moves: 2
-    color: 2
-    gridPos: {x: 0, y: 0}
-  - moves: 0
-    color: 6
+  - moves: 1
+    color: 0
     gridPos: {x: 2, y: 0}
   - moves: 0
-    color: 6
+    color: 3
     gridPos: {x: 2, y: 1}
-  - moves: 0
-    color: 6
-    gridPos: {x: 2, y: 2}

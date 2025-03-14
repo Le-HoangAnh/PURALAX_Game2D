@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         int currentStage = PlayerPrefs.GetInt(Constants.DATA.CURRENT_STAGE);
         string currentStageName = Constants.DATA.CURRENT_STAGE + "_" + currentStage.ToString();
         int currentLevel = PlayerPrefs.GetInt(Constants.DATA.CURRENT_LEVEL);
-        string currentLevelName = currentStageName + "_" + currentLevel.ToString();
+        currentLevelName = currentStageName + "_" + currentLevel.ToString();
 
         currentLevelObject = levelDictionary.GetLevel(currentLevelName);
         winColor = currentLevelObject.winColor;
@@ -158,9 +158,6 @@ public class GameManager : MonoBehaviour
     {
         AudioManager.instance.PlaySound(moveClip);
 
-        //Cell currentClickedCell = cellsDictionary[startClickGrid];
-        //Cell endClickedCell = cellsDictionary[startClickGrid + endClickGrid];
-
         //VALID STARTPOS
         if (!IsValidPos(startClickGrid))
         {
@@ -206,6 +203,8 @@ public class GameManager : MonoBehaviour
 
             stateDelay = Constants.Values.ANIMATION_TIME;
             StartCoroutine(SwitchStateAfterDelay());
+
+            CheckResult();
 
             return;
         }
@@ -259,8 +258,80 @@ public class GameManager : MonoBehaviour
                 neighbours.Add(item);
             }
         }
+
+        CheckResult();
     }
     
+    private void CheckResult()
+    {
+        int lose = 0;
+        bool win = true;
+
+        foreach (var item in cellsDictionary)
+        {
+            lose += item.Value.cellData.moves;
+            win = win && (item.Value.cellData.color == -1 || item.Value.cellData.color == winColor);
+        }
+
+        if (win)
+        {
+            Invoke("ShowWin", stateDelay + 0.5f);
+            Invoke("GameWin", stateDelay + 1.5f);
+            return;
+        }
+        else if (lose == 0)
+        {
+            AudioManager.instance.PlaySound(loseClip);
+            Invoke("GameLose", stateDelay + 1f); 
+            return;
+        }
+    }
+
+    private void GameWin()
+    {
+        int currentStage = PlayerPrefs.GetInt(Constants.DATA.CURRENT_STAGE);
+        string currentStageName = Constants.DATA.CURRENT_STAGE + "_" + currentStage.ToString();
+        int currentLevel = PlayerPrefs.GetInt(Constants.DATA.CURRENT_LEVEL);
+
+        //SET THE LEVEL TO WON
+        PlayerPrefs.SetInt(currentLevelName, 2);
+
+        //UNLOCK THE NEXT LEVEL
+        int updateLevel = currentLevel + 1;
+        if (updateLevel <= 20)
+        {
+            PlayerPrefs.SetInt(currentStageName + "_" + updateLevel.ToString(), 1);
+        }
+        else
+        {
+            int updateStage = currentStage + 1;
+            PlayerPrefs.SetInt(Constants.DATA.CURRENT_STAGE + "_" + updateStage.ToString(), 1);
+        }
+
+        //SET THE CURRENT LEVEL
+        int playLevel = currentLevel + 1;
+        if (playLevel > 20)
+        {
+            currentStage++;
+            playLevel = 1;
+        }
+        PlayerPrefs.SetInt(Constants.DATA.CURRENT_STAGE, currentStage);
+        PlayerPrefs.SetInt(Constants.DATA.CURRENT_LEVEL, playLevel);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+    }
+
+    private void GameLose()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }
+
+    private void ShowWin()
+    {
+        winImage.gameObject.SetActive(true);
+        winImage.color = colors[winColor];
+        AudioManager.instance.PlaySound(winClip);
+    }
 
     public void GameRestart()
     {

@@ -171,12 +171,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -201,7 +201,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 6
   m_TargetDisplay: 0
 --- !u!224 &112667440
 RectTransform:
@@ -547,12 +547,17 @@ MonoBehaviour:
   colors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0.52179044, b: 0, a: 1}
-  - {r: 1, g: 1, b: 0, a: 1}
-  - {r: 0.45705712, g: 1, b: 0, a: 1}
+  - {r: 0.8773585, g: 0.8773585, b: 0, a: 1}
+  - {r: 0.24070525, g: 1, b: 0, a: 1}
   - {r: 0, g: 0.8039216, b: 1, a: 1}
   - {r: 0.003921569, g: 0.078431375, b: 0.8666667, a: 1}
   - {r: 0.65882355, g: 0, b: 0.8980392, a: 1}
   - {r: 1, g: 0, b: 0.99215686, a: 1}
+  - {r: 0, g: 0.8679245, b: 0.78642935, a: 1}
+  - {r: 0, g: 0.6603774, b: 0.17585485, a: 1}
+  - {r: 0.65882355, g: 0.4494235, b: 0, a: 1}
+  - {r: 0.8396226, g: 0, b: 0.4356677, a: 1}
+  - {r: 0.5998942, g: 0.7924528, b: 0, a: 1}
 --- !u!4 &326255089
 Transform:
   m_ObjectHideFlags: 0
